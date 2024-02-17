@@ -10,11 +10,10 @@ from src.port_scanner import PortScan
 from src.directory_scan import scan_directories
 from src.dns_scan import DNSRecon
 from src.js_scan import find_javascript_files
+from src.ssl_scan import get_ssl_certificate_info
 
 from rich.console import Console
 from rich.table import Table
-from rich.text import Text
-
 
 console = Console()
 
@@ -54,6 +53,19 @@ def whois(full_url):
 def dns_scanner(domain):
     dns_recon = DNSRecon(domain)
     dns_recon.print_results()
+
+### SSL/TLS CERTIFICATES
+def display_ssl_certificate_info(domain):
+    ssl_info = get_ssl_certificate_info(domain)
+    ssl_info_table = Table(show_header=True, header_style="bold green", title="SSL/TLS Certificate Info")
+    ssl_info_table.add_column("Field", style="blue", no_wrap=True)
+    ssl_info_table.add_column("Value", style="magenta")
+
+    for key, value in  ssl_info.items():
+        ssl_info_table.add_row(key.replace("_", " ").title(), str(value))
+    console.print(ssl_info_table)
+    
+
 
 ### HTTP HEADERS
 def http_header(full_url):
@@ -103,8 +115,8 @@ def find_js_files(full_url):
     find_js_files_table.add_column("Status", style="magenta", justify="center")
 
     for js_file, status_code in js_files:
-        js_file_text = Text(js_file, no_wrap=True, overflow="fold")
-        find_js_files_table.add_row(wrap_text(js_file_text), str(status_code))
+        js_file_text = (f"[link={js_file}]{js_file}[/link]")
+        find_js_files_table.add_row(js_file_text, str(status_code))
     
     console.print(find_js_files_table)
 
@@ -132,6 +144,11 @@ def main():
     print("\n")
     console.print(f"DNS Scanning is in progress...", end="\n\n")
     dns_scanner(domain)
+    time.sleep(1)
+
+    print("\n")
+    console.print(f"SSL/TLS scanning is in progress...", end="\n\n")
+    display_ssl_certificate_info(domain)
     time.sleep(1)
 
     print("\n")
