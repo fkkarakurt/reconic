@@ -107,7 +107,7 @@ Before proceeding with the installation, ensure you have the following prerequis
 To update Reconic to the latest version, pull the latest changes from the repository and reinstall the dependencies:
 
 ```sh
-git pull origin master
+git pull origin main
 pip install -r requirements.txt
 ```
 
