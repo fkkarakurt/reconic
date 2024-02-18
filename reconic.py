@@ -108,11 +108,11 @@ def port_scanning(domain):
     report_data["Port Scanner"] = port_scan_results
 
 ### SUBDOMAIN SCANNING
-def subdomain_scanning(domain):
-    subdomain_scanner = SubdomainScanner(domain)
-    found_subdomains = subdomain_scanner.scan_subdomains()
-    subdomain_scanner.display_results(found_subdomains)
-    report_data["Subdomain"] = found_subdomains
+# def subdomain_scanning(domain):
+#     subdomain_scanner = SubdomainScanner(domain)
+#     found_subdomains = subdomain_scanner.scan_subdomains()
+#     subdomain_scanner.display_results(found_subdomains)
+#     report_data["Subdomain"] = found_subdomains
 
 ### DIRECTORY SCANNING    
 def directory_scanning(base_url, wordlist_file):
@@ -165,7 +165,8 @@ def main():
 
     print("\n")
     console.print(f"Subdomain scanning is in progress...", end="\n\n")
-    subdomain_scanning(domain)
+    console.print(f"I'm working on this. @fkkarakurt", end="\n\n")
+    # subdomain_scanning(domain)
 
     print("\n")
     console.print(f"Directory scanning in progress...", end="\n\n")
