@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="https://github.com/fkkarakurt/reconic/raw/main/reconicLogo.png" alt="Logo" width="200">
+  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/reconicLogo.png?raw=true" alt="Logo">
 </p>
 
 # Reconic | All-in-One Reconnaissance Tool
@@ -32,14 +32,12 @@ Each of these features is designed with precision to equip cybersecurity profess
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/usage.png?raw=true" alt="Usage" width="350">
+  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/usage.png?raw=true" alt="Usage">
 </p>
 
 <p align="center">
-  <img src="https://github.com/fkkarakurt/reconic/assets/raw/main/html_output.png" alt="Logo" width="350">
+  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/html_output.png" alt="Logo">
 </p>
-
-!
 
 
 ## Installation
