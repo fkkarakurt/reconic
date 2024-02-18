@@ -1,35 +1,70 @@
+"""
+Reconic: Comprehensive Network Reconnaissance Tool
+
+Description:
+Reconic is a powerful and versatile network reconnaissance tool designed to automate 
+the process of gathering information about a given target. It integrates various scanning 
+functionalities including WHOIS lookups, DNS resolution, SSL/TLS certificate inspections, 
+HTTP header analysis, port scanning, subdomain discovery, directory traversal, and 
+JavaScript file enumeration. The tool aims to provide a holistic overview of 
+the target's security posture, facilitating early detection of potential vulnerabilities 
+and misconfigurations.
+
+Features:
+- WHOIS Lookup: Retrieves domain registration details to identify the domain owner.
+- DNS Scan: Resolves DNS records to uncover associated domains and subdomains.
+- SSL/TLS Certificate Inspection: Examines SSL/TLS certificates for validity and configuration.
+- HTTP Header Analysis: Captures and analyzes HTTP headers for security headers and configurations.
+- Port Scanning: Scans for open ports to discover exposed services and potential entry points.
+- Subdomain Discovery: Enumerates subdomains to map the target's online presence.
+- Directory Traversal: Searches for accessible directories that may contain sensitive information.
+- JavaScript File Enumeration: Identifies JavaScript files for further analysis of client-side code.
+
+Author: Fatih Küçükkarakurt <https://github.com/fkkarakurt>
+Repository: https://github.com/reconic
+Created: 2024-10-085
+Last Updated: 2024-02-18
+"""
+
+
+
 import argparse
 import pyfiglet
-import time
 
-from src.whois_lookup import whois_lookup
-from src.subdomain_scan import perform_subdomain_scan
-from src.http_headers import get_http_headers
-from src.textwrap import wrap_text
+from src.whois_lookup import WhoisScanner
+from src.subdomain_scan import SubdomainScanner
+from src.http_headers import HTTPHeadersScanner
 from src.port_scanner import PortScan
-from src.directory_scan import scan_directories
+from src.directory_scan import DirectoryScanner
 from src.dns_scan import DNSRecon
-from src.js_scan import find_javascript_files
-from src.ssl_scan import get_ssl_certificate_info
+from src.js_scan import JSScanner
+from src.ssl_scan import SSLCertScanner
+from src.report_generator import ReportGenerator
 
 from rich.console import Console
-from rich.table import Table
 
-console = Console()
+console = Console(record=True)
 
+report_data = {}
+
+### ASCII ART
 @staticmethod
 def show_ascii():
     ascii_art = pyfiglet.figlet_format("RECONIC", font="ogre")
     console.print(f"[blue]{ascii_art}[/blue]")
     console.print("#" * 41  , style = "blue")
     console.print(
-        "#" * 14, "[link=https://github.com/fkkarakurt]@fkkarakurt[/link]", "#" * 14, style = "white"
+        "#" * 14, "@fkkarakurt", "#" * 14, style = "white"
     )
     console.print("#" * 41, style = "blue")
     print()
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Reconic Help Menu")
+### PARSER
+def parse_arguments():    
+    parser = argparse.ArgumentParser(
+        description="Reconic Help Menu",
+        epilog="Example usage: python3 reconic.py -u example.com --https"
+    )
     parser.add_argument("-u", "--url", help="Target URL", required=True)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--https", action="store_true", help="Use HTTPS for web technology detection")
@@ -37,88 +72,61 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
-
 ### WHOIS
 def whois(full_url):
-    whois_table = Table(show_header=True, header_style="bold green", title="[bold]WHOIS Results[/bold]")
-    whois_table.add_column("Info", style="blue")
-    whois_table.add_column("Value", style="magenta")
-    
-    whois_data = whois_lookup(full_url) 
-    for key, value in whois_data.items():
-        whois_table.add_row(key, wrap_text(value, 40))
-    console.print(whois_table)
+    whois_scanner = WhoisScanner(full_url)
+    whois_data = whois_scanner.perform_whois_lookup()
+    whois_scanner.display_results(whois_data)
+    report_data["Whois"] = whois_data
 
 ### DNS RESOLVER
 def dns_scanner(domain):
     dns_recon = DNSRecon(domain)
     dns_recon.print_results()
+    dns_data = dns_recon.perform_dns_recon()
+    report_data["DNS"] = dns_data
 
 ### SSL/TLS CERTIFICATES
 def display_ssl_certificate_info(domain):
-    ssl_info = get_ssl_certificate_info(domain)
-    ssl_info_table = Table(show_header=True, header_style="bold green", title="SSL/TLS Certificate Info")
-    ssl_info_table.add_column("Field", style="blue", no_wrap=True)
-    ssl_info_table.add_column("Value", style="magenta")
-
-    for key, value in  ssl_info.items():
-        ssl_info_table.add_row(key.replace("_", " ").title(), str(value))
-    console.print(ssl_info_table)
+    ssl_scanner = SSLCertScanner(domain)
+    ssl_info = ssl_scanner.get_ssl_certificate_info()
+    ssl_scanner.display_results(ssl_info) 
+    report_data["SSL"] = ssl_info
     
-
-
 ### HTTP HEADERS
 def http_header(full_url):
-    headers = get_http_headers(full_url)
-    headers_table = Table(show_header=True, header_style="bold green", title="[bold]HTTP Headers Results[/bold]")
-    headers_table.add_column("Header", style="blue")
-    headers_table.add_column("Value", style="magenta")
-    for key, value in headers.items():
-        headers_table.add_row(key, wrap_text(value, 40))
-    console.print(headers_table)
-
+    headers_scanner = HTTPHeadersScanner(full_url)
+    headers = headers_scanner.get_http_headers()
+    headers_scanner.display_results(headers)
+    report_data["HTTP Headers"] = headers
 
 ### PORT SCANNING
 def port_scanning(domain):
     port_scanner = PortScan(domain)
     port_scanner.run()
-
+    port_scan_results = port_scanner.get_scan_results()
+    report_data["Port Scanner"] = port_scan_results
 
 ### SUBDOMAIN SCANNING
 def subdomain_scanning(domain):
-    subdomains = perform_subdomain_scan(domain)
-    subdomains_table = Table(show_header=True, header_style="bold green", title="[bold]Subdomain Scanner Results[/bold]")
-    subdomains_table.add_column("Subdomain", style="blue")
-    subdomains_table.add_column("IP", style="magenta")
-    for subdomain, ips in subdomains.items():
-        subdomains_table.add_row(wrap_text(subdomain, 40), ".".join(ips))
-    console.print(subdomains_table)
+    subdomain_scanner = SubdomainScanner(domain)
+    found_subdomains = subdomain_scanner.scan_subdomains()
+    subdomain_scanner.display_results(found_subdomains)
+    report_data["Subdomain"] = found_subdomains
 
-### DIRECTORY SCANNING
-def directory_scanning(full_url):
-    wordlist_file = "wordlists/directories.txt"
-    max_threads = 50 # iş parçacığı sayısını ayarlayabilirsiniz.
-    found_directories = scan_directories(full_url, wordlist_file, max_threads)
+### DIRECTORY SCANNING    
+def directory_scanning(base_url, wordlist_file):
+    directory_scanner = DirectoryScanner(base_url, wordlist_file)
+    found_directories = directory_scanner.scan_directories()
+    directory_scanner.display_results(found_directories)
+    report_data["Directories"] = found_directories
 
-    directories_table = Table(show_header=True, header_style="bold green", title="[bold]Directory Scanner Results[/bold]")
-    directories_table.add_column("Directory", style="blue")
-    directories_table.add_column("Status", style="magenta", justify="center")
-    for directory in found_directories:
-        directories_table.add_row(directory, "200")
-    console.print(directories_table)
-    
 ### JS FILE SCANNING
-def find_js_files(full_url):
-    js_files = find_javascript_files(full_url)
-    find_js_files_table = Table(show_header=True, header_style="bold green", title="[bold]JavaScript Files Scanner Results[/bold]")
-    find_js_files_table.add_column("JavaScript Files", style="blue", no_wrap=False)
-    find_js_files_table.add_column("Status", style="magenta", justify="center")
-
-    for js_file, status_code in js_files:
-        js_file_text = (f"[link={js_file}]{js_file}[/link]")
-        find_js_files_table.add_row(js_file_text, str(status_code))
-    
-    console.print(find_js_files_table)
+def js_file_scanning(url):
+    js_scanner = JSScanner(url)
+    js_files = js_scanner.find_javascript_files()
+    js_scanner.display_results(js_files)
+    report_data["JavaScriptFiles"] = js_files
 
 
 def main():
@@ -129,52 +137,47 @@ def main():
     full_url = f"{protocol}{domain}"
 
     show_ascii()
-    print("\n")
-
+    console.print("\n")
+    
     console.print(f"Starting recon for the target: ", end="")
     console.print(f"{domain}", style='red', end="\n")
     console.print("\n")
-    time.sleep(1)
     
     print("\n")
     console.print(f"Whois Lookup is being done...", end="\n\n")
-    whois(domain)
-    time.sleep(1)
+    whois(full_url)    
 
     print("\n")
     console.print(f"DNS Scanning is in progress...", end="\n\n")
     dns_scanner(domain)
-    time.sleep(1)
 
     print("\n")
     console.print(f"SSL/TLS scanning is in progress...", end="\n\n")
     display_ssl_certificate_info(domain)
-    time.sleep(1)
 
     print("\n")
     console.print(f"Retrieving HTTP Headers...", end="\n\n")
     http_header(full_url)
-    time.sleep(1)
 
     print("\n")
     console.print(f"Port scanning is in progress...", end="\n\n")
     port_scanning(domain)
-    time.sleep(1)
 
     print("\n")
     console.print(f"Subdomain scanning is in progress...", end="\n\n")
     subdomain_scanning(domain)
-    time.sleep(1)
 
     print("\n")
     console.print(f"Directory scanning in progress...", end="\n\n")
-    directory_scanning(full_url)
-    time.sleep(1)
+    directory_scanning(full_url, "wordlists/directories.txt")
 
     print("\n")
     console.print(f"JavaScript files scanning in progress...", end="\n\n")
-    find_js_files(full_url)
-    time.sleep(1)
+    js_file_scanning(full_url)
+
+    report_generator = ReportGenerator(report_data)
+    report_generator.generate_html_report(f"{domain}.html")
+
 
 if __name__ == "__main__":
     main()
