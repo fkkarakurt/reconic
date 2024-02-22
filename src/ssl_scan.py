@@ -46,22 +46,29 @@ class SSLCertScanner:
     def get_ssl_certificate_info(self):
         ssl_info = {}
         context = ssl.create_default_context()
+        try:
+            with socket.create_connection((self.hostname, self.port), timeout=10) as sock:
+                with context.wrap_socket(sock, server_hostname=self.hostname) as ssock:
+                    certificate = ssock.getpeercert()
 
-        with socket.create_connection((self.hostname, self.port)) as sock:
-            with context.wrap_socket(sock, server_hostname=self.hostname) as ssock:
-                certificate = ssock.getpeercert()
-
-        # Reveal certificate information
-        ssl_info['Issuer'] = dict(x[0] for x in certificate['issuer'])
-        ssl_info['Subject'] = dict(x[0] for x in certificate['subject'])
-        ssl_info['Valid From'] = datetime.strptime(certificate['notBefore'], '%b %d %H:%M:%S %Y %Z').strftime('%Y-%m-%d %H:%M:%S')
-        ssl_info['Valid To'] = datetime.strptime(certificate['notAfter'], '%b %d %H:%M:%S %Y %Z').strftime('%Y-%m-%d %H:%M:%S')
-        ssl_info['Version'] = certificate['version']
-        ssl_info['Serial Number'] = certificate['serialNumber']
+            # Reveal certificate information
+            ssl_info['Issuer'] = dict(x[0] for x in certificate['issuer'])
+            ssl_info['Subject'] = dict(x[0] for x in certificate['subject'])
+            ssl_info['Valid From'] = datetime.strptime(certificate['notBefore'], '%b %d %H:%M:%S %Y %Z').strftime('%Y-%m-%d %H:%M:%S')
+            ssl_info['Valid To'] = datetime.strptime(certificate['notAfter'], '%b %d %H:%M:%S %Y %Z').strftime('%Y-%m-%d %H:%M:%S')
+            ssl_info['Version'] = certificate['version']
+            ssl_info['Serial Number'] = certificate['serialNumber']
+        except Exception as e:
+            self.console.print(f"[red]Error scanning SSL for {self.hostname}: {e}[/red]")
+            return None
 
         return ssl_info
 
     def display_results(self, ssl_info):
+        if ssl_info is None:
+            self.console.print(f"[yellow]No SSL information available for {self.hostname}.[/yellow]")
+            return
+
         table = Table(show_header=True, header_style="bold green", title="[bold]SSL Certificate Information[/bold]")
         table.add_column("Field", style="blue")
         table.add_column("Value", style="magenta")
