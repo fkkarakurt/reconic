@@ -20,7 +20,7 @@ Reconic is a network scanning and discovery tool designed to empower cybersecuri
 
 - **Port Scanning**: Scans for open ports, identifying exposed services and potential entry points for unauthorized access.
 
-- **Subdomain Discovery**: Enumerates subdomains, leveraging various techniques to map a comprehensive list of a target's subdomains. (I'm working on speeding up subdomain queries and making DNS resolution asynchronous.)
+- **Subdomain Discovery**: It gives a list of subdomains that do not return 404 with the DNS zone method.
 
 - **Directory Traversal**: Searches for accessible directories, identifying potentially sensitive information or misconfigured access controls.
 
