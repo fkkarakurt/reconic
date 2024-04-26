@@ -29,6 +29,7 @@ Last Updated: 2024-02-18
 
 
 import requests
+import time
 
 from src.textwrap import wrap_text
 
@@ -48,7 +49,7 @@ class HTTPHeadersScanner:
         except requests.exceptions.RequestException as e:
             self.console.print(f"Error retrieving HTTP headers: {e}", style="red")
             return {}
-
+        
     def display_results(self, headers):
         table = Table(show_header=True, header_style="bold green", title="[bold]HTTP Headers Results[/bold]")
         table.add_column("Header", style="blue", no_wrap=True)

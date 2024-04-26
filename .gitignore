@@ -161,4 +161,6 @@ cython_debug/
 
 test.py
 test_ports.json
+test_directories.txt
+test_subdomains.txt
 /output

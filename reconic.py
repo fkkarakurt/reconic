@@ -22,8 +22,6 @@ Features:
 
 Author: Fatih Küçükkarakurt <https://github.com/fkkarakurt>
 Repository: https://github.com/reconic
-Created: 2024-10-085
-Last Updated: 2024-02-18
 """
 
 
@@ -108,11 +106,12 @@ def port_scanning(domain):
     report_data["Port Scanner"] = port_scan_results
 
 ### SUBDOMAIN SCANNING
-# def subdomain_scanning(domain):
-#     subdomain_scanner = SubdomainScanner(domain)
-#     found_subdomains = subdomain_scanner.scan_subdomains()
-#     subdomain_scanner.display_results(found_subdomains)
-#     report_data["Subdomain"] = found_subdomains
+def subdomain_scanning(domain):
+    scanner = SubdomainScanner()
+    subdomains = scanner.get_subdomains(domain)
+    checked_subdomains = [subdomain for subdomain in subdomains if scanner.check_subdomain(subdomain['subdomain'])]
+    scanner.display_results(checked_subdomains)
+    report_data["Subdomain"] = checked_subdomains
 
 ### DIRECTORY SCANNING    
 def directory_scanning(base_url, wordlist_file):
@@ -165,8 +164,7 @@ def main():
 
     print("\n")
     console.print(f"Subdomain scanning is in progress...", end="\n\n")
-    console.print(f"I'm working on this. @fkkarakurt", end="\n\n")
-    # subdomain_scanning(domain)
+    subdomain_scanning(domain)
 
     print("\n")
     console.print(f"Directory scanning in progress...", end="\n\n")
@@ -178,7 +176,6 @@ def main():
 
     report_generator = ReportGenerator(report_data)
     report_generator.generate_html_report(f"{domain}.html")
-
 
 if __name__ == "__main__":
     main()
