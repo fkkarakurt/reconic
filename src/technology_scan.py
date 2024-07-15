@@ -13,7 +13,7 @@ import datetime
 
 console = Console()
 
-# Uyarıları göz ardı et
+# Ignore user warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 def get_cve_details_link(technology):
