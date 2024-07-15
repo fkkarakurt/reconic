@@ -37,7 +37,7 @@ from utils.utils import extractJsonData, threadPoolExecuter
 console = Console()
 
 class PortScan:
-    PORTS_DATA_FILE = "utils/ports.json"
+    PORTS_DATA_FILE = "utils/test_ports.json"
 
     def __init__(self, target):
         self.ports_info = {}

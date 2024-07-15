@@ -24,11 +24,11 @@ Author: Fatih Küçükkarakurt <https://github.com/fkkarakurt>
 Repository: https://github.com/reconic
 """
 
-
-
 import argparse
 import pyfiglet
-
+import asyncio
+import time
+import threading
 from src.whois_lookup import WhoisScanner
 from src.subdomain_scan import SubdomainScanner
 from src.http_headers import HTTPHeadersScanner
@@ -39,7 +39,6 @@ from src.js_scan import JSScanner
 from src.ssl_scan import SSLCertScanner
 from src.technology_scan import TechnologyScanner, display_cve_links
 from src.report_generator import ReportGenerator
-
 from rich.console import Console
 
 console = Console(record=True)
@@ -47,7 +46,6 @@ console = Console(record=True)
 report_data = {}
 
 ### ASCII ART
-@staticmethod
 def show_ascii():
     ascii_art = pyfiglet.figlet_format("RECONIC", font="ogre")
     console.print(f"[blue]{ascii_art}[/blue]")
@@ -110,14 +108,35 @@ def port_scanning(domain):
 def subdomain_scanning(domain):
     scanner = SubdomainScanner()
     subdomains = scanner.get_subdomains(domain)
-    checked_subdomains = [subdomain for subdomain in subdomains if scanner.check_subdomain(subdomain['subdomain'])]
+    
+    async def check_subdomains():
+        return await scanner.check_subdomains(subdomains)
+    
+    # Inform the user about the scanning process
+    def show_progress():
+        console.print("[yellow]Scanning subdomains, this may take a while...[/yellow]")
+        while not done:
+            time.sleep(10)
+            console.print("[yellow]Still scanning... please wait...[/yellow]")
+    
+    done = False
+    progress_thread = threading.Thread(target=show_progress)
+    progress_thread.start()
+    
+    loop = asyncio.get_event_loop()
+    checked_subdomains = loop.run_until_complete(check_subdomains())
+    
+    done = True
+    progress_thread.join()
+    
     scanner.display_results(checked_subdomains)
     report_data["Subdomain"] = checked_subdomains
 
 ### DIRECTORY SCANNING    
-def directory_scanning(base_url, wordlist_file):
+async def directory_scanning(base_url, wordlist_file):
     directory_scanner = DirectoryScanner(base_url, wordlist_file)
-    found_directories = directory_scanner.scan_directories()
+    await directory_scanner.initialize()
+    found_directories = await directory_scanner.scan_directories()
     directory_scanner.display_results(found_directories)
     report_data["Directories"] = found_directories
 
@@ -137,7 +156,6 @@ def technology_scanning(full_url):
     report_data["Technologies"] = technologies
 
     display_cve_links(technologies)
-
 
 def main():
     args = parse_arguments()
@@ -179,10 +197,10 @@ def main():
 
     print("\n")
     console.print(f"Directory scanning in progress...", end="\n\n")
-    directory_scanning(full_url, "wordlists/directories.txt")
+    asyncio.run(directory_scanning(full_url, "wordlists/directories.txt"))
 
     print("\n")
-    console.print(f"JavaScript files scanning in progress...", end="\n\n")
+    console.print(f"JavaScript files scanning is in progress...", end="\n\n")
     js_file_scanning(full_url)
 
     print("\n")
@@ -194,4 +212,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

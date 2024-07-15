@@ -125,15 +125,11 @@
       {% for subdomain in results.get('Subdomain') %}
       <tr>
         <td>
-          {% if subdomain['subdomain'].startswith('http://') or
-          subdomain['subdomain'].startswith('https://') %}
-          <a href="{{ subdomain['subdomain'] }}" target="_blank"
-            >{{ subdomain['subdomain'] }}</a
-          >
+          {% if subdomain.startswith('http://') or
+          subdomain.startswith('https://') %}
+          <a href="{{ subdomain }}" target="_blank">{{ subdomain }}</a>
           {% else %}
-          <a href="http://{{ subdomain['subdomain'] }}" target="_blank"
-            >{{ subdomain['subdomain'] }}</a
-          >
+          <a href="http://{{ subdomain }}" target="_blank">{{ subdomain }}</a>
           {% endif %}
         </td>
       </tr>
