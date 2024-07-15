@@ -3,120 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Reconic Report</title>
-    <style>
-      /* Base Styling */
-      body {
-        font-family: "Roboto", "Arial", sans-serif;
-        color: #444;
-        background-color: #f5f5f5;
-        margin: 0 auto;
-        padding: 20px;
-        max-width: 1200px; /* Prevents full-width stretch on larger screens */
-        line-height: 1.6;
-      }
-
-      h1,
-      h2 {
-        font-weight: normal;
-        color: #333;
-      }
-
-      h1 {
-        margin-bottom: 0.5em;
-      }
-
-      h2 {
-        margin-top: 1.5em;
-        margin-bottom: 0.75em;
-        color: #555; /* Subdued compared to initial design */
-        border-bottom: 1px solid #eaeaea;
-        padding-bottom: 3px;
-      }
-
-      /* Table styling for improved readability and professionalism */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: #fff;
-        margin-top: 20px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-
-      th,
-      td {
-        padding: 10px 15px;
-        text-align: left;
-        border: 1px solid #ddd;
-      }
-
-      th {
-        background-color: #e9ecef; /* Lighter and less intense than initial design */
-        color: #333;
-        font-weight: 600;
-      }
-
-      td {
-        font-size: 0.95em;
-      }
-
-      /* Adjusting link styling for better visual comfort */
-      a {
-        color: #333; /* Using a slightly less intense blue */
-        text-decoration: none;
-      }
-
-      a:hover {
-        color: black;
-        text-decoration: underline;
-      }
-
-      /* Responsive design adjustments */
-      @media screen and (max-width: 768px) {
-        body {
-          padding: 10px;
-        }
-
-        table,
-        thead,
-        tbody,
-        th,
-        td,
-        tr {
-          display: block;
-        }
-
-        thead tr {
-          position: absolute;
-          top: -9999px;
-          left: -9999px;
-        }
-
-        tr {
-          border: 1px solid #eaeaea;
-        }
-
-        td {
-          border: none;
-          border-bottom: 1px solid #eee;
-          position: relative;
-          padding-left: 50%;
-          text-align: right;
-        }
-
-        td:before {
-          position: absolute;
-          top: 12px;
-          left: 10px;
-          width: 45%;
-          padding-right: 10px;
-          white-space: nowrap;
-          text-align: left;
-          content: attr(data-label);
-          font-weight: 600;
-          color: #333;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="../templates/styles.css" />
   </head>
   <body>
     <!-- Github Follow Ribbon-->
@@ -272,16 +159,61 @@
     <!-- JavaScript Files -->
     {% if results.get('JavaScriptFiles') %}
     <h2>JavaScript Files</h2>
+    <div class="scrollable-table">
+      <table>
+        <tr>
+          <th>File URL</th>
+        </tr>
+        {% for js_file in results['JavaScriptFiles'] %}
+        <tr>
+          <td><a href="{{js_file}}" target="_blank">{{ js_file }}</a></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %}
+
+    <!-- Technology Scan Results -->
+    {% if results.get('Technologies') %}
+    <h2>Technology Scan Results</h2>
     <table>
       <tr>
-        <th>File URL</th>
+        <th>Technology</th>
+        <th>Categories</th>
       </tr>
-      {% for js_file in results['JavaScriptFiles'] %}
+      {% for tech, details in results['Technologies'].items() %}
       <tr>
-        <td><a href="{{js_file}}" target="_blank">{{ js_file }}</a></td>
+        <td>{{ tech }}</td>
+        <td>{{ details.categories | join(", ") }}</td>
       </tr>
       {% endfor %}
     </table>
+    {% endif %}
+
+    <!-- CVE Links for Technologies -->
+    {% if results.get('Technologies') %}
+    <h2>Possible Related CVE Links</h2>
+    <div class="scrollable-table">
+      <table>
+        <tr>
+          <th>Technology</th>
+          <th>Link</th>
+        </tr>
+        {% for tech in results['Technologies'].keys() %}
+        <tr>
+          <td>{{ tech }}</td>
+          <td>
+            <a
+              href="https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={{ tech | replace(' ', '%20') }}"
+              target="_blank"
+              >https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={{ tech |
+              replace(' ', '%20') }}</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
     {% endif %}
   </body>
 </html>

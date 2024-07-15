@@ -1,37 +1,3 @@
-"""
-HTML Report Generator
-
-This script, part of a broader project, is dedicated to generating HTML reports from given data. 
-It utilizes the Jinja2 templating engine to render HTML content dynamically, 
-based on the results passed to it and the current date and time. The script is designed to be flexible, 
-allowing for the specification of different templates and output files.
-
-The ReportGenerator class encapsulates the functionality for generating these reports. 
-It initializes with the data (results) to be included in the report and the path to the template folder. 
-The generate_html_report method then renders a specified template with the provided data and the current timestamp, 
-outputting the final report to a specified file.
-
-Features:
-- Dynamic HTML report generation using Jinja2 templating.
-- Customizable report templates and output file names.
-- Integration of current date and time for report metadata.
-
-Important:
-This tool is designed for projects requiring automated report generation, such as data analysis, 
-web scraping, or monitoring applications. It is essential to have the Jinja2 package installed and 
-to provide a valid template file within the specified template folder.
-
-
-Example Use Case:
-Could be used in an automated web scraping project to generate a summary report of the data collected over a period, 
-providing insights into trends or changes.
-
-Author: Fatih Küçükkarakurt <https://github.com/fkkarakurt>
-Created: 2024-02-11
-Last Updated: 2024-02-18
-"""
-
-
 import os
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
@@ -59,4 +25,3 @@ class ReportGenerator:
 
         print(f"Report generated: {output_file_path}")
         print("\n")
-

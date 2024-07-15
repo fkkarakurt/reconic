@@ -5,3 +5,6 @@ rich
 python-whois
 beautifulsoup4
 Jinja2
+Wappalyzer
+python-Wappalyzer
+nvdlib

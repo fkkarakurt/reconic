@@ -37,6 +37,7 @@ from src.directory_scan import DirectoryScanner
 from src.dns_scan import DNSRecon
 from src.js_scan import JSScanner
 from src.ssl_scan import SSLCertScanner
+from src.technology_scan import TechnologyScanner, display_cve_links
 from src.report_generator import ReportGenerator
 
 from rich.console import Console
@@ -127,6 +128,16 @@ def js_file_scanning(url):
     js_scanner.display_results(js_files)
     report_data["JavaScriptFiles"] = js_files
 
+### TECHNOLOGY SCANNING
+def technology_scanning(full_url):
+    tech_scanner = TechnologyScanner(full_url)
+    tech_scanner.scan_technologies()
+    tech_scanner.display_results()
+    technologies = tech_scanner.get_results()
+    report_data["Technologies"] = technologies
+
+    display_cve_links(technologies)
+
 
 def main():
     args = parse_arguments()
@@ -173,6 +184,10 @@ def main():
     print("\n")
     console.print(f"JavaScript files scanning in progress...", end="\n\n")
     js_file_scanning(full_url)
+
+    print("\n")
+    console.print(f"Technology scanning is in progress...", end="\n\n")
+    technology_scanning(full_url)
 
     report_generator = ReportGenerator(report_data)
     report_generator.generate_html_report(f"{domain}.html")

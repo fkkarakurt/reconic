@@ -1,0 +1,121 @@
+/* Base Styling */
+body {
+    font-family: "Roboto", "Arial", sans-serif;
+    color: #cfcfcf;
+    background-color: #1e1e1e;
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 1200px; /* Prevents full-width stretch on larger screens */
+    line-height: 1.6;
+  }
+  
+  h1,
+  h2 {
+    font-weight: normal;
+    color: #00ff00; /* Bright green */
+  }
+  
+  h1 {
+    margin-bottom: 0.5em;
+  }
+  
+  h2 {
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    color: #00ff00; /* Bright green */
+    border-bottom: 1px solid #444; /* Dark grey border */
+    padding-bottom: 3px;
+  }
+  
+  /* Table styling for improved readability and professionalism */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2b2b2b;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Green shadow */
+  }
+  
+  th,
+  td {
+    padding: 10px 15px;
+    text-align: left;
+    border: 1px solid #444; /* Dark grey border */
+  }
+  
+  th {
+    background-color: #3b3b3b; /* Darker background */
+    color: #00ff00; /* Bright green text */
+    font-weight: 600;
+  }
+  
+  td {
+    font-size: 0.95em;
+    color: #cfcfcf; /* Light grey text */
+  }
+  
+  /* Adjusting link styling for better visual comfort */
+  a {
+    color: #00ff00; /* Bright green */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: #ff0000; /* Red on hover */
+    text-decoration: underline;
+  }
+  
+  /* Scrollable table styling for long URLs */
+  .scrollable-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  /* Responsive design adjustments */
+  @media screen and (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+  
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+  
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+  
+    tr {
+      border: 1px solid #444; /* Dark grey border */
+    }
+  
+    td {
+      border: none;
+      border-bottom: 1px solid #444; /* Dark grey border */
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+    }
+  
+    td:before {
+      position: absolute;
+      top: 12px;
+      left: 10px;
+      width: 45%;
+      padding-right: 10px;
+      white-space: nowrap;
+      text-align: left;
+      content: attr(data-label);
+      font-weight: 600;
+      color: #00ff00; /* Bright green */
+    }
+  }
+  

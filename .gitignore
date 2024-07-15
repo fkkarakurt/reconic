@@ -163,7 +163,5 @@ cython_debug/
 #.idea/
 
 test.py
-test_ports.json
-test_directories.txt
-test_subdomains.txt
+test_*.*
 /output
