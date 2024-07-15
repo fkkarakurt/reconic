@@ -7,26 +7,27 @@
 
 Reconic is a network scanning and discovery tool designed to empower cybersecurity professionals and bug hunters in mapping, analyzing and securing digital infrastructures.
 
-
 ## Features
 
 - **WHOIS Lookup**: Automates the retrieval of domain registration details, providing insights into the ownership and administrative contacts of a target domain.
 
 - **DNS Resolution**: Executes scans to resolve DNS records, uncovering associated domains, subdomains, and critical DNS configurations.
 
-- **SSL/TLS Certificate Inspection**: Inspects SSL/TLS certificates for validity, expiration, and configuration details.
+- **SSL/TLS Certificate Inspection**: Inspects SSL/TLS certificates for validity, expiration, and configuration details. This includes detailed information about the issuer, subject, and validity period of the certificates.
 
-- **HTTP Header Analysis**: Captures HTTP headers.
+- **HTTP Header Analysis**: Captures and analyzes HTTP headers, providing insights into security configurations and potential misconfigurations.
 
-- **Port Scanning**: Scans for open ports, identifying exposed services and potential entry points for unauthorized access.
+- **Port Scanning**: Scans for open ports, identifying exposed services and potential entry points for unauthorized access. This feature helps in understanding the attack surface of the target system.
 
-- **Subdomain Discovery**: It gives a list of subdomains that do not return 404 with the DNS zone method.
+- **Subdomain Discovery**: Identifies and lists subdomains that do not return 404 errors, using DNS zone methods to uncover the full scope of a domain's presence on the internet.
 
-- **Directory Traversal**: Searches for accessible directories, identifying potentially sensitive information or misconfigured access controls.
+- **Directory Traversal**: Searches for accessible directories, identifying potentially sensitive information or misconfigured access controls. This can reveal hidden administrative interfaces or unsecured directories.
 
-- **JavaScript File Enumeration**: Identifies and lists JavaScript files for further analysis, focusing on client-side code that may reveal vulnerabilities or sensitive information.
+- **JavaScript File Enumeration**: Identifies and lists JavaScript files for further analysis. This focuses on client-side code that may reveal vulnerabilities or sensitive information, providing a pathway to identify potential security issues in web applications.
 
-Each of these features is designed with precision to equip cybersecurity professionals with the necessary tools to conduct thorough and effective reconnaissance operations. By leveraging Reconic, security teams can gain invaluable insights into their targets' network architectures, identifying vulnerabilities and securing their digital environments against emerging threats.
+- **Technology Scanner**: Analyzes the target webpage to identify the technologies used, including frameworks, libraries, and platforms. This feature provides a detailed understanding of the technological stack of the target, which is crucial for planning security assessments.
+
+- **CVE Links for Identified Technologies**: Provides links to the Common Vulnerabilities and Exposures (CVE) database for each identified technology. This helps in quickly identifying known vulnerabilities associated with the technologies in use, facilitating proactive security measures.
 
 ---
 ## Screenshots
