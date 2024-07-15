@@ -37,7 +37,9 @@ Reconic is a network scanning and discovery tool designed to empower cybersecuri
 </p>
 
 <p align="center">
-  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/html_output.png" alt="Logo">
+  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/html_output.png" alt="Output">
+  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/html_output1.png" alt="Output">
+  <img src="https://github.com/fkkarakurt/reconic/blob/main/assets/html_output2.png" alt="Output">
 </p>
 
 
