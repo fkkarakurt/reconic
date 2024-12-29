@@ -32,21 +32,47 @@ class SubdomainScanner:
         Fetches subdomains from crt.sh for a given domain. Filters and returns unique subdomains.
         """
         url = f"https://crt.sh/?q=%25.{domain}&output=json"
-        try:
-            response = requests.get(url, timeout=10)
-            data = response.json()
-            subdomain_set = set()
-            subdomains = []
-            for entry in data:
-                name_value = entry['name_value'].strip().lower()
-                for sub in name_value.split('\n'):
-                    if sub.endswith(f".{domain}") and sub not in subdomain_set:
-                        subdomain_set.add(sub)
-                        subdomains.append({'subdomain': sub})
-            return subdomains
-        except Exception as e:
-            print(f"Error fetching subdomains: {e}")
-            return []
+        
+        for attempt in range(5):  # Retry up to 5 times
+            try:
+                response = requests.get(url, timeout=10)
+
+                # Check if the response is valid
+                if response.status_code == 429:
+                    print(f"Received HTTP 429. Too many requests. Retrying in {2 ** attempt} seconds...")
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                    continue  # Retry the request
+
+                # Check for other status codes
+                if response.status_code != 200:
+                    print(f"Error fetching subdomains: HTTP {response.status_code}")
+                    return []
+
+                # Attempt to parse the JSON response
+                try:
+                    data = response.json()
+                except ValueError:
+                    print(f"Error fetching subdomains: Invalid JSON response")
+                    return []
+
+                subdomain_set = set()
+                subdomains = []
+                for entry in data:
+                    name_value = entry['name_value'].strip().lower()
+                    for sub in name_value.split('\n'):
+                        if sub.endswith(f".{domain}") and sub not in subdomain_set:
+                            subdomain_set.add(sub)
+                            subdomains.append({'subdomain': sub})
+                return subdomains
+
+            except requests.RequestException as e:
+                print(f"Error fetching subdomains: {e}")
+                return []
+
+            # If max attempts are reached and still not successful
+            if attempt == 4:
+                print("Max retries reached. Unable to fetch subdomains.")
+                return []
 
     async def check_subdomain(self, session, subdomain):
         """

@@ -123,14 +123,19 @@ def subdomain_scanning(domain):
     progress_thread = threading.Thread(target=show_progress)
     progress_thread.start()
     
-    loop = asyncio.get_event_loop()
-    checked_subdomains = loop.run_until_complete(check_subdomains())
+    # Modern asyncio loop handling
+    try:
+        checked_subdomains = asyncio.run(check_subdomains())
+    except Exception as e:
+        console.print(f"[red]Error during subdomain scanning: {e}[/red]")
+        checked_subdomains = []
     
     done = True
     progress_thread.join()
     
     scanner.display_results(checked_subdomains)
     report_data["Subdomain"] = checked_subdomains
+
 
 ### DIRECTORY SCANNING    
 async def directory_scanning(base_url, wordlist_file):

@@ -116,22 +116,22 @@ class TechnologyScanner:
         return self.technologies
 
 def display_cve_links(technologies):
-    """
-    Displays links to potentially related CVEs for the identified technologies.
-
-    Parameters:
-    technologies (dict): A dictionary containing the identified technologies.
-    """
     console.print("[bold blue]Possible Related CVE Links:[/bold blue]")
-    if not technologies:
+    
+    if not technologies or len(technologies) == 0:
         console.print("[bold red]No technologies found.[/bold red]")
-    else:
-        table = Table(show_header=True, header_style="bold green", title="[bold]CVE Links for Technologies[/bold]")
-        table.add_column("Technology", style="blue", justify="center")
-        table.add_column("CVE Link", style="magenta")
+        return  
 
-        for tech in technologies.keys():
+    table = Table(show_header=True, header_style="bold green", title="[bold]CVE Links for Technologies[/bold]")
+    table.add_column("Technology", style="blue", justify="center")
+    table.add_column("CVE Link", style="magenta")
+
+    for tech in technologies:
+        if tech == "No technologies found.":
+            table.add_row(tech, "###")
+        else:
             details_link = get_cve_details_link(tech)
             table.add_row(tech, details_link)
-        
-        console.print(table)
+
+    console.print(table)
+

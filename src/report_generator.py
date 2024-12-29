@@ -16,6 +16,9 @@ class ReportGenerator:
             os.makedirs(self.output_dir)
 
     def generate_html_report(self, output_file='report.html'):
+        if isinstance(self.results['Technologies'], set):
+            self.results['Technologies'] = {tech: {} for tech in self.results['Technologies']}
+
         template = self.env.get_template("report_template.html")
         rendered_html = template.render(results=self.results, date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         
@@ -25,3 +28,4 @@ class ReportGenerator:
 
         print(f"Report generated: {output_file_path}")
         print("\n")
+

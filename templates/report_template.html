@@ -1,215 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Reconic Report</title>
-    <link rel="stylesheet" href="../templates/styles.css" />
-  </head>
-  <body>
-    <!-- Github Follow Ribbon-->
-    <iframe
-      src="https://ghbtns.com/github-btn.html?user=fkkarakurt&type=follow&count=true"
-      frameborder="0"
-      scrolling="0"
-      width="170"
-      height="20"
-    ></iframe>
-    <!-- Github Star Ribbon-->
-    <iframe
-      src="https://ghbtns.com/github-btn.html?user=fkkarakurt&repo=reconic&type=star&count=true"
-      frameborder="0"
-      scrolling="0"
-      width="170"
-      height="20"
-    ></iframe>
 
-    <h1>
-      Recon Scan Results |
-      <a href="https://github.com/fkkarakurt/reconic" target="_blank"
-        >Reconic</a
-      >
-    </h1>
-    <p>Report Date: {{ date }}</p>
+<head>
+  <meta charset="UTF-8" />
+  <title>Reconic Report</title>
+  <link rel="stylesheet" href="../templates/styles.css" />
+</head>
 
-    <!-- Whois Results -->
-    {% if results.get('Whois') %}
-    <h2>Whois Results</h2>
+<body>
+  <!-- Github Follow Ribbon-->
+  <iframe src="https://ghbtns.com/github-btn.html?user=fkkarakurt&type=follow&count=true" frameborder="0" scrolling="0"
+    width="170" height="20"></iframe>
+  <!-- Github Star Ribbon-->
+  <iframe src="https://ghbtns.com/github-btn.html?user=fkkarakurt&repo=reconic&type=star&count=true" frameborder="0"
+    scrolling="0" width="170" height="20"></iframe>
+
+  <h1>
+    Recon Scan Results |
+    <a href="https://github.com/fkkarakurt/reconic" target="_blank">Reconic</a>
+  </h1>
+  <p>Report Date: {{ date }}</p>
+
+  <!-- Whois Results -->
+  {% if results.get('Whois') %}
+  <h2>Whois Results</h2>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    {% for key, value in results['Whois'].items() %}
+    <tr>
+      <td>{{ key }}</td>
+      <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- DNS Results -->
+  {% if results.get('DNS') %}
+  <h2>DNS Results</h2>
+  <table>
+    {% for record_type, records in results['DNS'].items() %}
+    <tr>
+      <th colspan="2">{{ record_type }} Records</th>
+    </tr>
+    {% for record in records %}
+    <tr>
+      <td colspan="2">{{ record }}</td>
+    </tr>
+    {% endfor %} {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- SSL Results -->
+  {% if results.get('SSL') %}
+  <h2>SSL Certificate Information</h2>
+  <table>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+    </tr>
+    {% for key, value in results['SSL'].items() %}
+    <tr>
+      <td>{{ key }}</td>
+      <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- HTTP Headers Results -->
+  {% if results.get('HTTP Headers') %}
+  <h2>HTTP Headers Results</h2>
+  <table>
+    <tr>
+      <th>Header</th>
+      <th>Value</th>
+    </tr>
+    {% for header, value in results['HTTP Headers'].items() %}
+    <tr>
+      <td>{{ header }}</td>
+      <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- Port Scan Results -->
+  {% if results.get('Port Scanner') %}
+  <h2>Port Scan Results</h2>
+  <table>
+    <tr>
+      <th>Port</th>
+      <th>Service</th>
+    </tr>
+    {% for port, service in results['Port Scanner'] %}
+    <tr>
+      <td>{{ port }}</td>
+      <td>{{ service }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- Subdomain Scan Results -->
+  {% if results.get('Subdomain') %}
+  <h2>Subdomain Scan Results</h2>
+  <table>
+    <tr>
+      <th>Subdomain</th>
+    </tr>
+    {% for subdomain in results.get('Subdomain') %}
+    <tr>
+      <td>
+        {% if subdomain.startswith('http://') or
+        subdomain.startswith('https://') %}
+        <a href="{{ subdomain }}" target="_blank">{{ subdomain }}</a>
+        {% else %}
+        <a href="http://{{ subdomain }}" target="_blank">{{ subdomain }}</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- Directory Scan Results -->
+  {% if results.get('Directories') %}
+  <h2>Directory Scan Results</h2>
+  <table>
+    <tr>
+      <th>Found Directories</th>
+    </tr>
+    {% for directory in results['Directories'] %}
+    <tr>
+      <td><a href="{{directory}}" target="_blank">{{ directory }}</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  <!-- JavaScript Files -->
+  {% if results.get('JavaScriptFiles') %}
+  <h2>JavaScript Files</h2>
+  <div class="scrollable-table">
     <table>
       <tr>
-        <th>Field</th>
-        <th>Value</th>
+        <th>File URL</th>
       </tr>
-      {% for key, value in results['Whois'].items() %}
+      {% for js_file in results['JavaScriptFiles'] %}
       <tr>
-        <td>{{ key }}</td>
-        <td>{{ value }}</td>
+        <td><a href="{{js_file}}" target="_blank">{{ js_file }}</a></td>
       </tr>
       {% endfor %}
     </table>
-    {% endif %}
+  </div>
+  {% endif %}
 
-    <!-- DNS Results -->
-    {% if results.get('DNS') %}
-    <h2>DNS Results</h2>
-    <table>
-      {% for record_type, records in results['DNS'].items() %}
-      <tr>
-        <th colspan="2">{{ record_type }} Records</th>
-      </tr>
-      {% for record in records %}
-      <tr>
-        <td colspan="2">{{ record }}</td>
-      </tr>
-      {% endfor %} {% endfor %}
-    </table>
-    {% endif %}
+  <!-- Technology Scan Results -->
+  {% if results.get('Technologies') %}
+  <h2>Technology Scan Results</h2>
+  <table>
+    <tr>
+      <th>Technology</th>
+      <th>Categories</th>
+    </tr>
+    {% for tech in results['Technologies'] %}
+    <tr>
+      <td>{{ tech }}</td>
+      <td>Uncategorized</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
 
-    <!-- SSL Results -->
-    {% if results.get('SSL') %}
-    <h2>SSL Certificate Information</h2>
-    <table>
-      <tr>
-        <th>Field</th>
-        <th>Value</th>
-      </tr>
-      {% for key, value in results['SSL'].items() %}
-      <tr>
-        <td>{{ key }}</td>
-        <td>{{ value }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% endif %}
 
-    <!-- HTTP Headers Results -->
-    {% if results.get('HTTP Headers') %}
-    <h2>HTTP Headers Results</h2>
+  <!-- CVE Links for Technologies -->
+  {% if results.get('Technologies') %}
+  <h2>Possible Related CVE Links</h2>
+  <div class="scrollable-table">
     <table>
       <tr>
-        <th>Header</th>
-        <th>Value</th>
+        <th>Technology</th>
+        <th>Link</th>
       </tr>
-      {% for header, value in results['HTTP Headers'].items() %}
+      {% for tech in results['Technologies'].keys() %}
       <tr>
-        <td>{{ header }}</td>
-        <td>{{ value }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% endif %}
-
-    <!-- Port Scan Results -->
-    {% if results.get('Port Scanner') %}
-    <h2>Port Scan Results</h2>
-    <table>
-      <tr>
-        <th>Port</th>
-        <th>Service</th>
-      </tr>
-      {% for port, service in results['Port Scanner'] %}
-      <tr>
-        <td>{{ port }}</td>
-        <td>{{ service }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% endif %}
-
-    <!-- Subdomain Scan Results -->
-    {% if results.get('Subdomain') %}
-    <h2>Subdomain Scan Results</h2>
-    <table>
-      <tr>
-        <th>Subdomain</th>
-      </tr>
-      {% for subdomain in results.get('Subdomain') %}
-      <tr>
+        <td>{{ tech }}</td>
         <td>
-          {% if subdomain.startswith('http://') or
-          subdomain.startswith('https://') %}
-          <a href="{{ subdomain }}" target="_blank">{{ subdomain }}</a>
-          {% else %}
-          <a href="http://{{ subdomain }}" target="_blank">{{ subdomain }}</a>
-          {% endif %}
+          <a href="https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={{ tech | replace(' ', '%20') }}"
+            target="_blank">https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={{ tech |
+            replace(' ', '%20') }}</a>
         </td>
       </tr>
       {% endfor %}
     </table>
-    {% endif %}
+  </div>
+  {% endif %}
+</body>
 
-    <!-- Directory Scan Results -->
-    {% if results.get('Directories') %}
-    <h2>Directory Scan Results</h2>
-    <table>
-      <tr>
-        <th>Found Directories</th>
-      </tr>
-      {% for directory in results['Directories'] %}
-      <tr>
-        <td><a href="{{directory}}" target="_blank">{{ directory }}</a></td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% endif %}
-
-    <!-- JavaScript Files -->
-    {% if results.get('JavaScriptFiles') %}
-    <h2>JavaScript Files</h2>
-    <div class="scrollable-table">
-      <table>
-        <tr>
-          <th>File URL</th>
-        </tr>
-        {% for js_file in results['JavaScriptFiles'] %}
-        <tr>
-          <td><a href="{{js_file}}" target="_blank">{{ js_file }}</a></td>
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-    {% endif %}
-
-    <!-- Technology Scan Results -->
-    {% if results.get('Technologies') %}
-    <h2>Technology Scan Results</h2>
-    <table>
-      <tr>
-        <th>Technology</th>
-        <th>Categories</th>
-      </tr>
-      {% for tech, details in results['Technologies'].items() %}
-      <tr>
-        <td>{{ tech }}</td>
-        <td>{{ details.categories | join(", ") }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% endif %}
-
-    <!-- CVE Links for Technologies -->
-    {% if results.get('Technologies') %}
-    <h2>Possible Related CVE Links</h2>
-    <div class="scrollable-table">
-      <table>
-        <tr>
-          <th>Technology</th>
-          <th>Link</th>
-        </tr>
-        {% for tech in results['Technologies'].keys() %}
-        <tr>
-          <td>{{ tech }}</td>
-          <td>
-            <a
-              href="https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={{ tech | replace(' ', '%20') }}"
-              target="_blank"
-              >https://cve.mitre.org/cgi-bin/cvekey.cgi?keyword={{ tech |
-              replace(' ', '%20') }}</a
-            >
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-    {% endif %}
-  </body>
 </html>
